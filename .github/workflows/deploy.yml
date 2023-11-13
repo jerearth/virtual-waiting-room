@@ -1,0 +1,36 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main", "auto-deploy" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      run: dotnet publish --no-build --no-restore --configuration Release --output ./publish
+    - name: Deploy
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SERVER_USERNAME: "team"
+        SERVER_HOST: "xdev.jer.earth"
+      run: |
+        echo "$SSH_PRIVATE_KEY" > private_key.ppk
+        chmod 600 private_key.ppk
+        scp -i private_key.ppk -r ./publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
+        ssh -i private_key.ppk $SERVER_USERNAME@$SERVER_HOST
+        sudo systemctl restart app
