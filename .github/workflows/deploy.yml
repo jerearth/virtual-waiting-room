@@ -22,7 +22,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish
-      run: dotnet publish --no-build --no-restore --configuration Release --output ./publish
+      run: dotnet publish --no-build --no-restore --configuration Release --output publish
     - name: Deploy
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -31,6 +31,8 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > private_key.ppk
         chmod 600 private_key.ppk
-        scp -i private_key.ppk -r ./publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
+        pwd
+        ls -la
+        scp -i private_key.ppk -r publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
         ssh -i private_key.ppk $SERVER_USERNAME@$SERVER_HOST
         sudo systemctl restart app
