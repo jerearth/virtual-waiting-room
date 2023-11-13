@@ -32,11 +32,12 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SERVER_USERNAME: "team"
         SERVER_HOST: "xdev.jer.earth"
+        KEY_FILE_NAME: "private_key.ppk"
       run: |
-        echo "$SSH_PRIVATE_KEY" > private_key.ppk
-        chmod 600 private_key.ppk
+        echo "$SSH_PRIVATE_KEY" > $KEY_FILE_NAME
+        chmod 600 $KEY_FILE_NAME
         pwd
         ls -la
-        scp -i private_key.ppk -o StrictHostKeyChecking=no -r src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:home/app 
-        ssh -i private_key.ppk -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST
+        scp -i $KEY_FILE_NAME -o StrictHostKeyChecking=no -r src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
+        ssh -i $KEY_FILE_NAME -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST
         sudo systemctl restart app
