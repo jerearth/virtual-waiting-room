@@ -1,5 +1,8 @@
 name: Build
 
+inputs:
+
+
 on:
   push:
     branches: [ "main", "auto-deploy" ]
@@ -29,7 +32,7 @@ jobs:
         SERVER_USERNAME: "team"
         SERVER_HOST: "xdev.jer.earth"
       run: |
-        echo "$SSH_PRIVATE_KEY" > private_key.ppk
+        echo "${{ env.SSH_PRIVATE_KEY }}" > private_key.ppk
         chmod 600 private_key.ppk
         pwd
         ls -la
