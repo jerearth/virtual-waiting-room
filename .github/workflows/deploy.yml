@@ -15,6 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Check for Secret availability
+      id: secret-check
+      shell: bash
+      run: |
+        if [ "${{ secrets.SSH_PRIVATE_KEY }}" != '' ]; then
+          echo "true"
+        else
+          echo "false"
+        fi
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -37,6 +46,6 @@ jobs:
         chmod 600 private_key.ppk
         pwd
         ls -la
-        scp -i private_key.ppk -r publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
+        scp -i private_key.ppk -r virtual-waiting-room/virtual-waiting-room/src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
         ssh -i private_key.ppk $SERVER_USERNAME@$SERVER_HOST
         sudo systemctl restart app
