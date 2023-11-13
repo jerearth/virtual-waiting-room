@@ -38,5 +38,5 @@ jobs:
         pwd
         ls -la
         scp -i private_key.ppk -o StrictHostKeyChecking=no -r virtual-waiting-room/virtual-waiting-room/src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:home/app 
-        ssh -i private_key.ppk $SERVER_USERNAME@$SERVER_HOST
+        ssh -i private_key.ppk -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST
         sudo systemctl restart app
