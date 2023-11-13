@@ -1,10 +1,8 @@
-name: Deploy
+name: Deploy to Production
 
 on:
   push:
-    branches: [ "main", "auto-deploy" ] # Don't forget to remove this
-  pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
