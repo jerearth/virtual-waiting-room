@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ "main", "auto-deploy" ]
+    branches: [ "main", "auto-deploy" ] # Don't forget to remove this
   pull_request:
     branches: [ "main" ]
 
@@ -36,6 +36,6 @@ jobs:
         ls -la
         scp -i $KEY_FILE_NAME -o StrictHostKeyChecking=no -r src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
         ssh -i $KEY_FILE_NAME -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST "$( cat <<'EOT'
-        systemctl restart app
+        sudo systemctl restart app
         EOT
         )"
