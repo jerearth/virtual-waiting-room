@@ -39,5 +39,7 @@ jobs:
         pwd
         ls -la
         scp -i $KEY_FILE_NAME -o StrictHostKeyChecking=no -r src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
-        ssh -i $KEY_FILE_NAME -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST
-        sudo systemctl restart app
+        ssh -i $KEY_FILE_NAME -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST "$( cat <<'EOT'
+        systemctl restart app
+        EOT
+        )"
