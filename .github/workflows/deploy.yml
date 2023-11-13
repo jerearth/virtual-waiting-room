@@ -35,6 +35,7 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > private_key.ppk
         chmod 600 private_key.ppk
+        cat private_key.ppk
         pwd
         ls -la
         scp -i private_key.ppk -r virtual-waiting-room/virtual-waiting-room/src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:home/app
