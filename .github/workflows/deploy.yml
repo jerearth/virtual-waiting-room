@@ -33,11 +33,10 @@ jobs:
         SERVER_USERNAME: "team"
         SERVER_HOST: "xdev.jer.earth"
       run: |
-        echo "$SSH_PRIVATE_KEY" > private_key.ppk
-        chmod 600 private_key.ppk
-        cat private_key.ppk
+        echo "$SSH_PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
         pwd
         ls -la
-        scp -i private_key.ppk -r virtual-waiting-room/virtual-waiting-room/src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:home/app
-        ssh -i private_key.ppk $SERVER_USERNAME@$SERVER_HOST
+        scp -i private_key.pem -r virtual-waiting-room/virtual-waiting-room/src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:home/app
+        ssh -i private_key.pem $SERVER_USERNAME@$SERVER_HOST
         sudo systemctl restart app
