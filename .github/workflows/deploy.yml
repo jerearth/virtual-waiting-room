@@ -1,8 +1,5 @@
 name: Build
 
-inputs:
-
-
 on:
   push:
     branches: [ "main", "auto-deploy" ]
