@@ -8,32 +8,32 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-    - name: Publish
-      run: dotnet publish --configuration Release
-    - name: Deploy
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        SERVER_USERNAME: "team"
-        SERVER_HOST: "xdev.jer.earth"
-        KEY_FILE_NAME: "private_key.ppk"
-      run: |
-        echo "$SSH_PRIVATE_KEY" > $KEY_FILE_NAME
-        chmod 600 $KEY_FILE_NAME
-        pwd
-        ls -la
-        scp -i $KEY_FILE_NAME -o StrictHostKeyChecking=no -r src/Web/bin/Release/net7.0/publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
-        ssh -i $KEY_FILE_NAME -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST "$( cat <<'EOT'
-        sudo systemctl restart app
-        EOT
-        )"
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+      - name: Publish
+        run: dotnet publish --configuration Release
+      - name: Deploy
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_USERNAME: "team"
+          SERVER_HOST: "xdev.jer.earth"
+          KEY_FILE_NAME: "private_key.ppk"
+        run: |
+          echo "$SSH_PRIVATE_KEY" > $KEY_FILE_NAME
+          chmod 600 $KEY_FILE_NAME
+          pwd
+          ls -la
+          scp -i $KEY_FILE_NAME -o StrictHostKeyChecking=no -r src/Web/bin/Release/net8.0/publish/* $SERVER_USERNAME@$SERVER_HOST:/home/app
+          ssh -i $KEY_FILE_NAME -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST "$( cat <<'EOT'
+          sudo systemctl restart app
+          EOT
+          )"
