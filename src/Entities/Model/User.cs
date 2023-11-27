@@ -1,4 +1,5 @@
 ﻿using Entities.Enums;
+using Entities.Model.Shared;
 
 namespace Entities.Model
 {
