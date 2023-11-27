@@ -1,4 +1,6 @@
-﻿namespace Entities.Model
+﻿using Entities.Model.Shared;
+
+namespace Entities.Model
 {
     public class RoomAdmin : BaseEntity
     {
