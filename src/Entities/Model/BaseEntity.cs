@@ -1,6 +1,6 @@
 ﻿namespace Entities.Model
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity : IDatabaseEntry
     {
         /// <summary>
         /// Primary key of the entity

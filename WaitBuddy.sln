@@ -25,7 +25,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "actions", "actions", "{BBD5
 		.github\workflows\build.yml = .github\workflows\build.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Web.csproj", "{97A3F849-DB87-405A-8005-1C9CC5FD1493}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "src\Web\Web.csproj", "{97A3F849-DB87-405A-8005-1C9CC5FD1493}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Internal", "Internal\Internal.csproj", "{C8A66E92-994F-4B8D-AAEA-B616D3D355BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,10 @@ Global
 		{97A3F849-DB87-405A-8005-1C9CC5FD1493}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97A3F849-DB87-405A-8005-1C9CC5FD1493}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97A3F849-DB87-405A-8005-1C9CC5FD1493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8A66E92-994F-4B8D-AAEA-B616D3D355BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8A66E92-994F-4B8D-AAEA-B616D3D355BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8A66E92-994F-4B8D-AAEA-B616D3D355BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8A66E92-994F-4B8D-AAEA-B616D3D355BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +65,7 @@ Global
 		{A7AB9118-3AD0-4970-889D-2F28B1092B57} = {4F03ECBB-1063-4479-A2F8-D9FF8E69E9F9}
 		{BBD5AE94-4F79-4390-9B06-4C93C233A295} = {CBF68778-A26E-4FCA-8FA3-1354206CEE09}
 		{97A3F849-DB87-405A-8005-1C9CC5FD1493} = {8499C624-13B3-47A7-9E45-9E80B48F8C7B}
+		{C8A66E92-994F-4B8D-AAEA-B616D3D355BD} = {8499C624-13B3-47A7-9E45-9E80B48F8C7B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2B523CC9-33BB-4121-9474-78BE54826A67}

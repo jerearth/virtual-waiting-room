@@ -1,0 +1,18 @@
+﻿@page "/landing"
+@inject NavigationManager _navigationManager
+@layout EmptyLayout
+
+<PageTitle>@Constants.APPLICATION_NAME</PageTitle>
+
+<div>LOGO</div>
+
+<BigButton Text="Prihlásiť sa" OnClick=@(() => _navigationManager.NavigateTo($"account/login{_returnUrlIfNeeded}", true)) />
+<BigButton Text="Vytvoriť účet" OnClick=@(() => _navigationManager.NavigateTo($"account/create-account{_returnUrlIfNeeded}", true)) />
+<BigButton Text="Pokračovať bez účtu" OnClick=@(() => _navigationManager.NavigateTo($"account/no-account{_returnUrlIfNeeded}", true)) Disabled=true />
+
+@code {
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; } = string.Empty;
+
+    private string _returnUrlIfNeeded { get => ReturnUrl is null ? string.Empty : $"?returnUrl={Uri.EscapeDataString(ReturnUrl)}"; }
+}

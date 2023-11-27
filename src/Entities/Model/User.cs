@@ -1,8 +1,8 @@
 ﻿namespace Entities.Model
 {
-    public class User : BaseEntity
+    public class User : IdentityUser<int>, IDatabaseEntry
     {
-        public string PhoneNumber { get; set; }
+        public DateTime Created { get; set; }
 
         // relations
         public List<RoomAdmin> AdminForRooms { get; set; } = new();
