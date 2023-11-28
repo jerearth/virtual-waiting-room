@@ -1,0 +1,17 @@
+﻿﻿.spinner {
+    border: 8px solid silver;
+    border-top: 8px solid #373535;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 1s ease-in-out infinite;
+    top: 40%;
+    left: 55%;
+    position: absolute;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

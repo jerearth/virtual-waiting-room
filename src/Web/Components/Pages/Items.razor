@@ -1,0 +1,46 @@
+﻿@page "/items"
+@inject IDbContextFactory<AppDbContext> _dbContextFactory
+
+<PageTitle>Items</PageTitle>
+
+<h3>Items</h3>
+
+@if(_rooms is null)
+{
+    <Spinner/>
+} else if(!_rooms.Any())
+{
+    <h5>Žiadne miestnosti doposiaľ neboli vytvorené</h5>
+} else
+{
+    foreach(var room in _rooms)
+    {
+        <div>
+            @room.Name
+        </div>
+    }
+}
+
+@code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CURRENT_ACCOUNT)]
+    public required User _user { get; set; }
+
+    private List<Room>? _rooms;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _rooms = await db.RoomAdmins
+            .Include(x => x.Room)
+            .Where(x => x.UserId.Equals(_user.Id))
+            .Select(x => x.Room)
+            .AsNoTracking()
+            .ToListAsync();
+
+        StateHasChanged();
+    }
+}

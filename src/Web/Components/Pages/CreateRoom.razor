@@ -49,13 +49,12 @@
 
 @code {
     [CascadingParameter(Name = Constants.CascadingParameters.CURRENT_ACCOUNT)]
-    public required User CurrentUser { get; set; }
+    public required User _user { get; set; }
 
     [CascadingParameter(Name = Constants.CascadingParameters.MAIN_LAYOUT)]
-    public required MainLayout MainLayout { get; set; }
+    public required MainLayout _mainLayout { get; set; }
 
     private CreateRoomModel _createRoomModel = new();
-    private User? _user;
 
     private async Task OnSubmitAsync()
     {
@@ -71,14 +70,14 @@
         room.RoomAdmins.Add(new()
         {
             Room = room,
-            UserId = CurrentUser.Id
+            UserId = _user.Id
         });
 
         db.Rooms.Add(room);
 
         await db.SaveChangesAsync();
 
-        MainLayout.RunToast(new($"Nová miestnosť s názvom {_createRoomModel.Name} bola úspešne vytvorená.", ToastType.Success));
+        _mainLayout.RunToast(new($"Nová miestnosť s názvom {_createRoomModel.Name} bola úspešne vytvorená.", ToastType.Success));
         _navigationManager.NavigateTo("/");
     }
 
