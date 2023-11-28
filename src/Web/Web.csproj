@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Internal\Internal.csproj" />
+    <ProjectReference Include="..\Internal\Internal.csproj" />
     <ProjectReference Include="..\Database\Database.csproj" />
     <ProjectReference Include="..\Entities\Entities.csproj" />
   </ItemGroup>
