@@ -1,0 +1,97 @@
+﻿@page "/create-room"
+@attribute [Authorize]
+@inject IDbContextFactory<AppDbContext> _dbContextFactory
+@inject IdentityUserAccessor _userAccessor
+@inject NavigationManager _navigationManager
+
+<PageTitle>Vytvoriť miestnosť</PageTitle>
+
+<div class="row">
+    <div class="col-md-4">
+        <EditForm Model="_createRoomModel" OnValidSubmit="OnSubmitAsync">
+            <DataAnnotationsValidator />
+            <h2>Vytvoriť miestnosť</h2>
+
+            <hr />
+
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="_createRoomModel.Name" class="form-control" autocomplete="room-name" placeholder="Všeobecná ambulancia" />
+                <label for="name">Názov miestnosti</label>
+                <ValidationMessage For="() => _createRoomModel.Name" class="text-danger" />
+            </div>
+
+            <div class="form-checkbox">
+                <label for="enable-daily-limit">Obmedziť denný počet návštevníkov</label>
+                <InputCheckbox @bind-Value="_createRoomModel.EnableDailyLimit" />
+            </div>
+
+            @if (_createRoomModel.EnableDailyLimit)
+            {
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="_createRoomModel.DailyLimit" class="form-control" autocomplete="room-daily-limit" placeholder="1" />
+                    <label for="daily-limit">Denný limit</label>
+                    <ValidationMessage For="() => _createRoomModel.DailyLimit" class="text-danger" />
+                </div>
+            }
+
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="_createRoomModel.Notes" class="form-control" autocomplete="notes" placeholder="Prosíme pred vstupom si pripraviť ..." />
+                <label for="notes">Poznámky pre zákazníkov/klientov</label>
+                <ValidationMessage For="() => _createRoomModel.Notes" class="text-danger" />
+            </div>
+
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Vytvoriť</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CURRENT_ACCOUNT)]
+    public required User CurrentUser { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.MAIN_LAYOUT)]
+    public required MainLayout MainLayout { get; set; }
+
+    private CreateRoomModel _createRoomModel = new();
+    private User? _user;
+
+    private async Task OnSubmitAsync()
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var room = new Room()
+        {
+            Name = _createRoomModel.Name!,
+            DailyLimit = _createRoomModel.DailyLimit is null ? null : _createRoomModel.DailyLimit.Value,
+            Notes = _createRoomModel.Notes
+        };
+
+        room.RoomAdmins.Add(new()
+        {
+            Room = room,
+            UserId = CurrentUser.Id
+        });
+
+        db.Rooms.Add(room);
+
+        await db.SaveChangesAsync();
+
+        MainLayout.RunToast(new($"Nová miestnosť s názvom {_createRoomModel.Name} bola úspešne vytvorená.", ToastType.Success));
+        _navigationManager.NavigateTo("/");
+    }
+
+    private class CreateRoomModel
+    {
+        [Required(AllowEmptyStrings = false)]
+        public string? Name { get; set; }
+
+        [Range(1, 1000)]
+        public int? DailyLimit { get; set; }
+
+        public bool EnableDailyLimit { get; set; }
+
+        public string? Notes { get; set; }
+    }
+}

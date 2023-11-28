@@ -1,4 +1,4 @@
-﻿namespace Entities.Model
+﻿namespace Entities.Model.Shared
 {
     public interface IDatabaseEntry
     {
