@@ -1,15 +1,15 @@
 ﻿using Entities.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Database
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
-        public AppDbContext(DbContextOptions options) : base(options)
-        {
-        }
+        public AppDbContext(DbContextOptions options)
+            : base(options) { }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Reason> Reason { get; set; }
         public DbSet<RoomTemplate> RoomTemplates { get; set; }

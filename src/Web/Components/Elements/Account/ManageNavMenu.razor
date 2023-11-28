@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<User> SignInManager
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item">
+        <NavLink class="nav-link" href="settings" Match="NavLinkMatch.All">Profile</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="settings/email">Email</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="settings/change-password">Password</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="settings/personal-data">Personal data</NavLink>
+    </li>
+</ul>

@@ -1,5 +1,7 @@
 using Database;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Web.Components;
@@ -8,6 +10,44 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+// Add authorization
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<
+    AuthenticationStateProvider,
+    IdentityRevalidatingAuthenticationStateProvider
+>();
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+    })
+    .AddIdentityCookies();
+
+builder.Services
+    .AddIdentityCore<User>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireDigit = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+    })
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/landing";
+});
+
+builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
 // Setup Database connection
 #if DEBUG
@@ -34,6 +74,8 @@ using (var scope = app.Services.CreateScope())
 
     if (dbContext.Database.IsRelational())
         dbContext.Database.Migrate();
+
+    AppDataSeeder.SeedTestData(scope.ServiceProvider).GetAwaiter().GetResult();
 }
 
 app.UseForwardedHeaders(
@@ -57,5 +99,8 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
+// Add additional endpoints required by the Identity /Account Razor components.
+app.MapAdditionalIdentityEndpoints();
 
 app.Run();

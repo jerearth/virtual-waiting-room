@@ -3,12 +3,9 @@ using Entities.Model.Shared;
 
 namespace Entities.Model
 {
-    public class User : BaseEntity
+    public class User : IdentityUser<int>, IDatabaseEntry
     {
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
-        public string UserName { get; set; }
-        public UserRole UserRole { get; set; } = UserRole.Basic;
+        public DateTime Created { get; set; }
 
         // relations
         public List<RoomAdmin> AdminForRooms { get; set; } = [];
