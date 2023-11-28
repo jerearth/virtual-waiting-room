@@ -29,7 +29,15 @@ builder.Services
     .AddIdentityCookies();
 
 builder.Services
-    .AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddIdentityCore<User>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireDigit = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+    })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -66,6 +74,8 @@ using (var scope = app.Services.CreateScope())
 
     if (dbContext.Database.IsRelational())
         dbContext.Database.Migrate();
+
+    AppDataSeeder.SeedTestData(scope.ServiceProvider).GetAwaiter().GetResult();
 }
 
 app.UseForwardedHeaders(
