@@ -1,0 +1,53 @@
+﻿@page "/room/detail"
+@inject IDbContextFactory<AppDbContext> _dbContextFactory
+@inject NavigationManager _navigationManager
+
+<PageTitle>Detaily o miestnosti @(_room?.Name ?? Id.ToString())</PageTitle>
+
+@if(_room is null)
+{
+    <Spinner/>
+} else {
+    <h3>Detaily o miestnosti @(_room?.Name ?? Id.ToString())</h3>
+
+    @if(_room.RoomAdmins.Any(x => x.UserId.Equals(_user.Id)))
+    {
+        <button @onclick=@(() => _navigationManager.NavigateTo($"/create-room?id={_room.Id}"))>Upraviť miestnosť</button>
+    }
+}
+
+@code {
+    [CascadingParameter(Name = Constants.CascadingParameters.CURRENT_ACCOUNT)]
+    public required User _user { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.MAIN_LAYOUT)]
+    public required MainLayout _mainLayout { get; set; }
+
+    [SupplyParameterFromQuery]
+    public required int Id { get; set; }
+
+    private Room? _room;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!firstRender)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _room = await db.Rooms
+            .Include(x => x.RoomAdmins)
+            .Where(x => x.Id.Equals(Id))
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
+
+        if(_room is null) 
+        {
+            _mainLayout.RunToast(new("Žiadaná miestnosť neexistuje.", ToastType.Fail));
+            _navigationManager.NavigateTo("/");
+            return;
+        }
+
+        StateHasChanged();
+    }
+}

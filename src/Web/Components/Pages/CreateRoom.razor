@@ -1,0 +1,155 @@
+﻿@page "/create-room"
+@attribute [Authorize]
+@inject IDbContextFactory<AppDbContext> _dbContextFactory
+@inject IdentityUserAccessor _userAccessor
+@inject NavigationManager _navigationManager
+
+<PageTitle>@StringHelper.GetCreateOrEditAction(Id is null) miestnosť</PageTitle>
+
+<div class="row">
+    <div class="col-md-4">
+        <EditForm Model="_createRoomModel" OnValidSubmit="OnSubmitAsync">
+            <DataAnnotationsValidator />
+            <h2>@StringHelper.GetCreateOrEditAction(Id is null) miestnosť</h2>
+
+            <hr />
+
+            <ValidationSummary class="text-danger" role="alert" />
+            @if(_createRoomModel is null)
+            {
+                <Spinner/>
+            } else {
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="_createRoomModel.Name" class="form-control" autocomplete="room-name" placeholder="Všeobecná ambulancia" />
+                    <label for="name">Názov miestnosti</label>
+                    <ValidationMessage For="() => _createRoomModel.Name" class="text-danger" />
+                </div>
+
+                <div class="form-checkbox">
+                    <label for="enable-daily-limit">Obmedziť denný počet návštevníkov</label>
+                    <InputCheckbox @bind-Value="_createRoomModel.EnableDailyLimit" />
+                </div>
+
+                @if (_createRoomModel.EnableDailyLimit)
+                {
+                    <div class="form-floating mb-3">
+                        <InputNumber @bind-Value="_createRoomModel.DailyLimit" class="form-control" autocomplete="room-daily-limit" placeholder="1" />
+                        <label for="daily-limit">Denný limit</label>
+                        <ValidationMessage For="() => _createRoomModel.DailyLimit" class="text-danger" />
+                    </div>
+                }
+
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="_createRoomModel.Notes" class="form-control" autocomplete="notes" placeholder="Prosíme pred vstupom si pripraviť ..." />
+                    <label for="notes">Poznámky pre zákazníkov/klientov</label>
+                    <ValidationMessage For="() => _createRoomModel.Notes" class="text-danger" />
+                </div>
+
+                <button type="submit" class="w-100 btn btn-lg btn-primary">@StringHelper.GetCreateOrEditAction(Id is null)</button>
+            }
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int? Id { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.CURRENT_ACCOUNT)]
+    public required User _user { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.MAIN_LAYOUT)]
+    public required MainLayout _mainLayout { get; set; }
+
+    private CreateRoomModel? _createRoomModel = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(!firstRender)
+            return;
+
+        if (Id is not null)
+        {
+            using var db = _dbContextFactory.CreateDbContext();
+
+            var targetRoom = await db.Rooms.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(Id));
+
+            if (targetRoom is null)
+            {
+                _mainLayout.RunToast(new($"Miestnosť ktorú sa snažíte upraviť už neexistuje, môžete pokračovať vo vytváraní novej miestnosti.", ToastType.Fail));
+                Id = null;
+                return;
+            }
+
+            _createRoomModel = new()
+                {
+                    Name = targetRoom.Name,
+                    Notes = targetRoom.Notes,
+                    DailyLimit = targetRoom.DailyLimit,
+                    EnableDailyLimit = targetRoom.DailyLimit.HasValue
+                };
+
+        }
+        else
+            _createRoomModel = new();
+        StateHasChanged();
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        if(_createRoomModel is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        int? dailyLimit = _createRoomModel.DailyLimit is null ? null : _createRoomModel.DailyLimit.Value;
+
+        if (Id is null)
+        {
+            var room = new Room()
+                {
+                    Name = _createRoomModel.Name,
+                    DailyLimit = dailyLimit,
+                    Notes = _createRoomModel.Notes
+                };
+
+            room.RoomAdmins.Add(new()
+                {
+                    Room = room,
+                    UserId = _user.Id
+                });
+
+            db.Rooms.Add(room);
+
+            await db.SaveChangesAsync();
+
+            _mainLayout.RunToast(new($"Nová miestnosť s názvom {_createRoomModel.Name} bola úspešne vytvorená.", ToastType.Success));
+            _navigationManager.NavigateTo($"/room/detail?id={room.Id}");
+        } else
+        {
+            var targetRoom = await db.Rooms.FirstAsync(x => x.Id.Equals(Id));
+
+            targetRoom.Name = _createRoomModel.Name;
+            targetRoom.DailyLimit = _createRoomModel.DailyLimit;
+            targetRoom.Notes = _createRoomModel.Notes;
+
+            await db.SaveChangesAsync();
+
+            _mainLayout.RunToast(new($"Miestnosť s názvom {_createRoomModel.Name} bola úspešne upravená.", ToastType.Success));
+            _navigationManager.NavigateTo($"/room/detail?id={Id}");
+        }
+    }
+
+    private class CreateRoomModel
+    {
+        [Required(AllowEmptyStrings = false)]
+        public string Name { get; set; } = string.Empty;
+
+        [Range(1, 1000)]
+        public int? DailyLimit { get; set; }
+
+        public bool EnableDailyLimit { get; set; }
+
+        public string? Notes { get; set; }
+    }
+}
