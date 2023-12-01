@@ -3,8 +3,9 @@
     public enum QueueState
     {
         Pending,
-        Approved,
         Rejected,
-        Finished
+        Waiting,
+        Finished,
+        NotHere
     }
 }

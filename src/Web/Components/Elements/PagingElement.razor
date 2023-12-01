@@ -1,0 +1,53 @@
+﻿<div class="page-number-wrapper">
+    @if(_rangeStart >= 3)
+    {
+        <div class="page-number" @onclick="async () => await SetPageNumber(1)">
+            <a>1</a>
+        </div>
+
+        <label class="page-number-separator">...</label>
+    }
+
+    @foreach(var val in Enumerable.Range(_rangeStart, _rangeEnd-_rangeStart+1))
+    {
+        <div class="page-number"
+             style="@(val == CurrentPage ? "border-color:#1270FF;background-color: #e6edff;" : string.Empty)" @onclick="async () => await SetPageNumber(val)">
+            <a>@val</a>
+        </div>
+    }
+
+    
+    @if(_rangeEnd <= _highestPage-2)
+    {
+        <label class="page-number-separator">...</label>
+        
+        <div class="page-number" @onclick="async () => await SetPageNumber(_highestPage)">
+            <a>@_highestPage</a>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int CurrentPage { get; set; } = default!;
+
+    [Parameter]
+    public int ElementCount { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<int> OnPageChanged { get; set; } = default!;
+
+    private int _highestPage { get => (int) Math.Max(1, Math.Ceiling((double) ElementCount / Constants.Limits.MAX_ITEMS_PER_PAGE)); }
+
+    private int _rangeStart { get => Math.Max(1, CurrentPage - 2); }
+    private int _rangeEnd { get => Math.Min(_highestPage, CurrentPage + 2); }
+
+    private async Task SetPageNumber(int pageNumber)
+    {
+        if(CurrentPage == pageNumber)
+            return;
+
+        CurrentPage = pageNumber;
+        await OnPageChanged.InvokeAsync(pageNumber);
+    }
+}

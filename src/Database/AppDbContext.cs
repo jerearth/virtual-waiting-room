@@ -7,8 +7,7 @@ namespace Database
 {
     public class AppDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
-        public AppDbContext(DbContextOptions options)
-            : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Reason> Reason { get; set; }

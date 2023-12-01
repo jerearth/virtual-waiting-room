@@ -13,6 +13,7 @@
     @if(_room.RoomAdmins.Any(x => x.UserId.Equals(_user.Id)))
     {
         <button @onclick=@(() => _navigationManager.NavigateTo($"/create-room?id={_room.Id}"))>Upraviť miestnosť</button>
+        <button @onclick=@(() => _navigationManager.NavigateTo($"/room/queue?id={_room.Id}"))>Zobraziť poradovník</button>
     }
 }
 

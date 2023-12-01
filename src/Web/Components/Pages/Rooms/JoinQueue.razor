@@ -1,0 +1,123 @@
+﻿@page "/room/join"
+@attribute [Authorize]
+@inject IDbContextFactory<AppDbContext> _dbContextFactory
+@inject NavigationManager _navigationManager
+
+<div class="row">
+    <div class="col-md-4">
+        @if (_room is null || _joinQueueModel is null)
+        {
+            <Spinner />
+        }
+        else
+        {
+            <EditForm Model="_joinQueueModel" OnValidSubmit="OnSubmitAsync">
+                <DataAnnotationsValidator />
+                <h2>Miestnosť @_room.Name</h2>
+
+                <hr />
+
+                <ValidationSummary class="text-danger" role="alert" />
+
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="_joinQueueModel.NotificationMinutesInAdvance" class="form-control" autocomplete="notification-minutes-in-advance" placeholder="15" />
+                    <label for="notification-minutes-in-advance">Doba pred nástupom pre doručenie notifikácie (minút)</label>
+                    <ValidationMessage For="() => _joinQueueModel.NotificationMinutesInAdvance" class="text-danger" />
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="_joinQueueModel.PhoneNumber" class="form-control" autocomplete="phone-number" placeholder="+421 xxx xxx xxx" />
+                    <label for="phone-number">Telefónne číslo</label>
+                    <ValidationMessage For="() => _joinQueueModel.PhoneNumber" class="text-danger" />
+                </div>
+
+                <button type="submit" class="w-100 btn btn-lg btn-primary">Pripojiť sa</button>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.CURRENT_ACCOUNT)]
+    public required User _user { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.MAIN_LAYOUT)]
+    public required MainLayout _mainLayout { get; set; }
+
+    private Room? _room;
+    private JoinQueueModel? _joinQueueModel;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _joinQueueModel = new()
+        {
+            PhoneNumber = _user.PhoneNumber
+        };
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _room = await db.Rooms.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(Id));
+
+        if (_room is null)
+        {
+            _mainLayout.RunToast(new("Žiadaná miestnosť už neexistuje.", ToastType.Fail));
+            _navigationManager.NavigateTo("/");
+            return;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        if(_joinQueueModel is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+        var targetRoom = await db.Rooms.Include(x => x.QueuedUsers).FirstOrDefaultAsync(x => x.Id.Equals(Id));
+
+        if (targetRoom is null)
+        {
+            _mainLayout.RunToast(new("Žiadaná miestnosť už neexistuje.", ToastType.Fail));
+            _navigationManager.NavigateTo("/");
+            return;
+        }
+
+        if(targetRoom.QueuedUsers.Any(x => x.QueueState.Equals(QueueState.Waiting) && x.UserId.Equals(_user.Id)))
+        {
+            _mainLayout.RunToast(new("Už ste v poradovníku tejto miestnosti.", ToastType.Fail));
+            _navigationManager.NavigateTo("/");
+            return;
+        }
+
+        targetRoom.QueuedUsers.Add(new()
+        {
+           UserId = _user.Id,
+           RoomId = targetRoom.Id,
+           Order = targetRoom.QueuedUsers.Any() ? targetRoom.QueuedUsers.Max(x => x.Order) + 1 : 1,
+           PhoneNumber = _joinQueueModel.PhoneNumber,
+           NotificationMinutesInAdvance = _joinQueueModel.NotificationMinutesInAdvance,
+           QueueState = QueueState.Waiting
+        });
+
+        await db.SaveChangesAsync();
+        _navigationManager.NavigateTo($"/room/my-queue?id={Id}");
+    }
+
+    private class JoinQueueModel
+    {
+        [Required(AllowEmptyStrings = false)]
+        [Range(1, 60)]
+        public int NotificationMinutesInAdvance { get; set; } = Constants.Limits.DEFAULT_MINUTE_TIME_BEFORE_TURN;
+
+        [Required(AllowEmptyStrings = false)]
+        [DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; } = string.Empty;
+    }
+}

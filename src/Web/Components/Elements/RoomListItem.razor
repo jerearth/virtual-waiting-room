@@ -1,10 +1,24 @@
 ﻿@inject NavigationManager _navigationManager
 
-<div @onclick=@(() => _navigationManager.NavigateTo($"room/detail?id={Room.Id}")) style="cursor: pointer;">
+<div style="display: flex; flex-direction: row; column-gap: 10px;
+background-color: rgba(240, 240, 240, 255);">
     @Room.Name
+    @if (IsUserAdmin)
+    {
+        <div @onclick=@(() => _navigationManager.NavigateTo($"room/detail?id={Room.Id}")) style="cursor: pointer;">
+            Úprava
+        </div>
+    } else {
+        <div @onclick=@(() => _navigationManager.NavigateTo($"room/join?id={Room.Id}")) style="cursor: pointer;">
+            Návšteva
+        </div>
+    }
 </div>
 
 @code {
     [Parameter]
     public required Room Room { get; set; }
+
+    [Parameter]
+    public required bool IsUserAdmin { get; set; }
 }

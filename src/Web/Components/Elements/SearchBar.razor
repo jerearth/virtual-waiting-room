@@ -1,0 +1,18 @@
+﻿﻿
+<input type="text" placeholder="@_placeholder" @oninput="OnInputChanged" />
+
+@code {
+    [Parameter]
+    public string SearchObject { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnInputChanged { get; set; }
+
+    private string _placeholder
+    {
+        get
+        {
+            return $"Hľadať {SearchObject.ToLower()} ...";
+        }
+    }
+}
