@@ -1,7 +1,6 @@
 ﻿@page "/create-room"
 @attribute [Authorize]
 @inject IDbContextFactory<AppDbContext> _dbContextFactory
-@inject IdentityUserAccessor _userAccessor
 @inject NavigationManager _navigationManager
 
 <PageTitle>@StringHelper.GetCreateOrEditAction(Id is null) miestnosť</PageTitle>
@@ -26,6 +25,12 @@
                 </div>
 
                 <div class="form-checkbox">
+                    <label for="appear-in-search">Zobraziť vo vyhľadávaní</label>
+                    <InputCheckbox @bind-Value="_createRoomModel.AppearInSearch" />
+                    <ValidationMessage For="() => _createRoomModel.AppearInSearch" class="text-danger" />
+                </div>
+
+                <div class="form-checkbox">
                     <label for="enable-daily-limit">Obmedziť denný počet návštevníkov</label>
                     <InputCheckbox @bind-Value="_createRoomModel.EnableDailyLimit" />
                 </div>
@@ -38,6 +43,25 @@
                         <ValidationMessage For="() => _createRoomModel.DailyLimit" class="text-danger" />
                     </div>
                 }
+
+                <div class="form-checkbox">
+                    <label for="require-password">Vyžadovať heslo</label>
+                    <InputCheckbox @bind-Value="_createRoomModel.RequirePassword" />
+                </div>
+
+                @if (_createRoomModel.RequirePassword)
+                {
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="_createRoomModel.Password" class="form-control" autocomplete="password" />
+                        <label for="daily-limit">Heslo</label>
+                        <ValidationMessage For="() => _createRoomModel.Password" class="text-danger" />
+                    </div>
+                }
+
+                <div class="form-checkbox">
+                    <label for="require-confirmation">Vyžadovať potvrdenie od každej osoby pre prístup</label>
+                    <InputCheckbox @bind-Value="_createRoomModel.RequireConfirmation" />
+                </div>
 
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="_createRoomModel.Notes" class="form-control" autocomplete="notes" placeholder="Prosíme pred vstupom si pripraviť ..." />
@@ -86,7 +110,11 @@
                     Name = targetRoom.Name,
                     Notes = targetRoom.Notes,
                     DailyLimit = targetRoom.DailyLimit,
-                    EnableDailyLimit = targetRoom.DailyLimit.HasValue
+                    EnableDailyLimit = targetRoom.DailyLimit.HasValue,
+                    Password = targetRoom.Password ?? string.Empty,
+                    RequirePassword = !string.IsNullOrEmpty(targetRoom.Password),
+                    AppearInSearch = targetRoom.AppearInSearch,
+                    RequireConfirmation = targetRoom.RequireConfirmation
                 };
 
         }
@@ -109,8 +137,12 @@
             var room = new Room()
                 {
                     Name = _createRoomModel.Name,
+                    SearchName = _createRoomModel.Name.NormalizeForSearch(),
                     DailyLimit = dailyLimit,
-                    Notes = _createRoomModel.Notes
+                    Notes = _createRoomModel.Notes,
+                    AppearInSearch = _createRoomModel.AppearInSearch,
+                    Password = !_createRoomModel.RequirePassword ? null : _createRoomModel.Password,
+                    RequireConfirmation = _createRoomModel.RequireConfirmation
                 };
 
             room.RoomAdmins.Add(new()
@@ -130,8 +162,12 @@
             var targetRoom = await db.Rooms.FirstAsync(x => x.Id.Equals(Id));
 
             targetRoom.Name = _createRoomModel.Name;
+            targetRoom.SearchName = _createRoomModel.Name.NormalizeForSearch();
             targetRoom.DailyLimit = _createRoomModel.DailyLimit;
             targetRoom.Notes = _createRoomModel.Notes;
+            targetRoom.AppearInSearch = _createRoomModel.AppearInSearch;
+            targetRoom.Password = !_createRoomModel.RequirePassword ? null : _createRoomModel.Password;
+            targetRoom.RequireConfirmation = _createRoomModel.RequireConfirmation;
 
             await db.SaveChangesAsync();
 
@@ -151,5 +187,13 @@
         public bool EnableDailyLimit { get; set; }
 
         public string? Notes { get; set; }
+
+        public bool AppearInSearch { get; set; }
+
+        public bool RequirePassword { get; set; }
+
+        public string Password { get; set; } = string.Empty;
+
+        public bool RequireConfirmation { get; set; }
     }
 }

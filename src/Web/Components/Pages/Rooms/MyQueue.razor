@@ -1,0 +1,78 @@
+﻿@page "/room/my-queue"
+@attribute [Authorize]
+@inject IDbContextFactory<AppDbContext> _dbContextFactory
+@inject NavigationManager _navigationManager
+
+<PageTitle>Poradovník</PageTitle>
+
+@if(_room is null || _queuedCurrentUser is null)
+{
+    <Spinner/>
+} else
+{
+    <h3>Ste v poradovníku miestnosti @_room.Name</h3>
+
+    <h5>Vaše číslo: @_queuedCurrentUser.Order</h5>
+    <h5>Pred Vami je ešte @_room.QueuedUsers.Count(x => x.Order < _queuedCurrentUser.Order) ľudí</h5>
+
+    <button @onclick="LeaveQueueAsync">Opustiť poradovník</button>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.CURRENT_ACCOUNT)]
+    public required User _user { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.MAIN_LAYOUT)]
+    public required MainLayout _mainLayout { get; set; }
+
+    private Room? _room;
+    private QueuedUser? _queuedCurrentUser;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _room = await db.Rooms.Include(x => x.QueuedUsers).AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(Id));
+
+        if (_room is null)
+        {
+            _mainLayout.RunToast(new("Žiadaná miestnosť už neexistuje.", ToastType.Fail));
+            _navigationManager.NavigateTo("/");
+            return;
+        }
+
+        _queuedCurrentUser = _room.QueuedUsers.FirstOrDefault(x => x.QueueState.Equals(QueueState.Waiting) && x.UserId.Equals(_user.Id));
+
+        if(_queuedCurrentUser is null)
+        {
+            _mainLayout.RunToast(new("Nie ste v poradovníku tejto miestnosti.", ToastType.Fail));
+            _navigationManager.NavigateTo($"/room/join?id={Id}");
+            return;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task LeaveQueueAsync()
+    {
+        if (_room is null)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetQueuedUsers = await db.QueuedUsers.Where(x => x.UserId.Equals(_user.Id) && x.RoomId.Equals(_room.Id)).ToListAsync();
+
+        db.RemoveRange(targetQueuedUsers);
+
+        await db.SaveChangesAsync();
+
+        _mainLayout.RunToast(new($"Úspešne ste opustili poradovník miestnosti {_room.Name}.", ToastType.Fail));
+        _navigationManager.NavigateTo("/");
+    }
+}

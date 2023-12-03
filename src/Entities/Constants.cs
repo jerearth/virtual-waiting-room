@@ -19,5 +19,12 @@ public static class Constants
     public static class Limits
     {
         public const int DEFAULT_TOAST_DURATION_IN_MS = 2000;
+        public const int MAX_ITEMS_PER_PAGE = 10;
+        public const int DEFAULT_MINUTE_TIME_BEFORE_TURN = 10;
+    }
+
+    public static class Times
+    {
+        public const double DEBOUNCE_TIME = 200;
     }
 }

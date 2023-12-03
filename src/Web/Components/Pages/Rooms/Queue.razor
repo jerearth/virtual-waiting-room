@@ -1,0 +1,79 @@
+﻿@page "/room/queue"
+@attribute [Authorize]
+@inject IDbContextFactory<AppDbContext> _dbContextFactory
+@inject NavigationManager _navigationManager
+
+@if(_room is null)
+{
+    <Spinner/>
+} else
+{
+    foreach(var queuedUser in _room.QueuedUsers.Where(x => x.QueueState.Equals(QueueState.Waiting)).OrderBy(x => x.Order))
+    {
+        <div>@queuedUser.Order @queuedUser.PhoneNumber
+            <button @onclick="async () => await MarkAsAsync(queuedUser, QueueState.NotHere)">Not here</button>
+            <button @onclick="async () => await MarkAsAsync(queuedUser, QueueState.Finished)">Finished</button>
+        </div>
+    }
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.CURRENT_ACCOUNT)]
+    public required User _user { get; set; }
+
+    [CascadingParameter(Name = Constants.CascadingParameters.MAIN_LAYOUT)]
+    public required MainLayout _mainLayout { get; set; }
+
+    private Room? _room;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        using var db = _dbContextFactory.CreateDbContext();
+
+        _room = await db.Rooms
+            .Include(x => x.RoomAdmins)
+            .Include(x => x.QueuedUsers)
+                .ThenInclude(x => x.User)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id.Equals(Id));
+
+        if (_room is null)
+        {
+            _mainLayout.RunToast(new("Žiadaná miestnosť už neexistuje.", ToastType.Fail));
+            _navigationManager.NavigateTo("/");
+            return;
+        }
+
+        var currentRoomAdmin = _room.RoomAdmins.FirstOrDefault(x => x.UserId.Equals(_user.Id));
+
+        if (currentRoomAdmin is null)
+        {
+            _mainLayout.RunToast(new("Nie ste správcom tejto miestnosti.", ToastType.Fail));
+            _navigationManager.NavigateTo("/");
+            return;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task MarkAsAsync(QueuedUser queuedUser, QueueState queueState)
+    {
+        using var db = _dbContextFactory.CreateDbContext();
+
+        var targetQueuedUser = await db.QueuedUsers.FirstAsync(x => x.Id.Equals(queuedUser.Id));
+
+        targetQueuedUser.QueueState = queueState;
+
+        await db.SaveChangesAsync();
+
+        queuedUser.QueueState = queueState;
+
+        StateHasChanged();
+    }
+}

@@ -5,8 +5,10 @@ namespace Entities.Model
 {
     public class QueuedUser : BaseEntity
     {
-        public int Order { get; set; } = 1;
-        public QueueState QueueState { get; set; } = QueueState.Pending;
+        public required int Order { get; set; }
+        public required QueueState QueueState { get; set; }
+        public required string PhoneNumber { get; set; }
+        public required int NotificationMinutesInAdvance { get; set; }
 
         // Relations
         public int UserId { get; set; }
