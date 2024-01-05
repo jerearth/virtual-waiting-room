@@ -4,7 +4,13 @@ namespace Internal.Account;
 
 public sealed class IdentityNoOpEmailSender : IEmailSender<User>
 {
-    private readonly IEmailSender emailSender = new NoOpEmailSender();
+    private readonly IEmailSender emailSender;
+
+    public IdentityNoOpEmailSender(IEmailSender emailSender)
+    {
+        this.emailSender = emailSender;
+
+    }
 
     public Task SendConfirmationLinkAsync(User user, string email, string confirmationLink) =>
         emailSender.SendEmailAsync(

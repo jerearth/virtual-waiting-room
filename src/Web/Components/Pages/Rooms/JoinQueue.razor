@@ -31,6 +31,15 @@
                     <ValidationMessage For="() => _joinQueueModel.PhoneNumber" class="text-danger" />
                 </div>
 
+                @if(_room.Password is not null)
+                {
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="_joinQueueModel.Password" class="form-control" autocomplete="password" />
+                        <label for="phone-number">Heslo pre vstup</label>
+                        <ValidationMessage For="() => _joinQueueModel.Password" class="text-danger" />
+                    </div>
+                }
+
                 <button type="submit" class="w-100 btn btn-lg btn-primary">Pripojiť sa</button>
             </EditForm>
         }
@@ -57,7 +66,7 @@
 
         _joinQueueModel = new()
         {
-            PhoneNumber = _user.PhoneNumber
+            PhoneNumber = _user.PhoneNumber ?? string.Empty
         };
 
         using var db = _dbContextFactory.CreateDbContext();
@@ -76,8 +85,14 @@
 
     private async Task OnSubmitAsync()
     {
-        if(_joinQueueModel is null)
+        if(_joinQueueModel is null || _room is null)
             return;
+
+        if(_room.Password is not null && !_room.Password.Equals(_joinQueueModel.Password))
+        {
+            _mainLayout.RunToast(new("Zadané heslo nie je správne.", ToastType.Fail));
+            return;
+        }
 
         using var db = _dbContextFactory.CreateDbContext();
         var targetRoom = await db.Rooms.Include(x => x.QueuedUsers).FirstOrDefaultAsync(x => x.Id.Equals(Id));
@@ -119,5 +134,8 @@
         [Required(AllowEmptyStrings = false)]
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; } = string.Empty;
+
+        [DataType(DataType.Password)]
+        public string? Password { get; set; }
     }
 }

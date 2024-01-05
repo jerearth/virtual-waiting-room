@@ -2,6 +2,7 @@ using Database;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Web.Components;
@@ -47,6 +48,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/landing";
 });
 
+builder.Services.AddTransient<IEmailSender>(x => new SendGridEmailSender("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"));
 builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
 // Setup Database connection
