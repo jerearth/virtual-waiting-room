@@ -2,10 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+html, body {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  @apply text-primary;
 }
+
+h1, h2, h3, h4, h5, h6, .titleFont, .title {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700 !important;
+  @apply text-contrast;
+}
+
+.title { 
+  @apply text-[2rem] xs:text-[2.5rem] s:text-[3rem] m:text-[3.5rem] l:text-[4rem];
+}
+
+h1 { font-size: 2rem !important; }
+h2 { font-size: 1.741rem !important; }
+h3 { font-size: 1.516rem !important; }
+h4 { font-size: 1.320rem !important; }
+h5 { font-size: 1.149rem !important; }
+h6 { font-size: 1.0rem !important; }
 
 a,
 .btn-link {
@@ -121,11 +139,13 @@ main {
   .sidebar {
     width: 250px;
     height: 100vh;
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
   }
 
   .top-row {
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1;
@@ -163,7 +183,9 @@ main {
   top: 0.5rem;
 }
 .navbar-toggler {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   cursor: pointer;
   width: 3.5rem;
   height: 2.5rem;
@@ -277,7 +299,10 @@ main {
   border-radius: 1.25rem;
   background: #fff;
   box-shadow: 0px 0px 20px 5px #e8efff;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   transition: all 0.5s ease-in;
 }
 
@@ -293,12 +318,16 @@ main {
 .page-number-wrapper {
   display: flex;
   justify-content: center;
-  column-gap: 10px;
+  -moz-column-gap: 10px;
+       column-gap: 10px;
   margin-bottom: 20px;
 }
 
 .page-number-separator {
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 .spinner {
@@ -307,10 +336,17 @@ main {
   border-radius: 50%;
   width: 80px;
   height: 80px;
-  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
+          animation: spin 1s ease-in-out infinite;
   top: 40%;
   left: 55%;
   position: absolute;
+}
+
+@-webkit-keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes spin {
