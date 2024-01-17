@@ -78,6 +78,14 @@ button, a {
     rgba(14, 25, 78, 0.1) 0px 8px 24px, rgba(14, 25, 78, 0.1) 0px 16px 56px;
 }
 
+.my-input {
+  @apply block w-full px-3 py-1 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-full transition ease-in-out mb-3 focus:text-gray-700 focus:bg-white focus:border-contrast focus:outline-none;
+}
+
+.text-danger {
+  @apply text-red-700 font-light text-sm ml-2;
+}
+
 h1:focus {
   outline: none;
 }
