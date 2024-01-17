@@ -3,56 +3,30 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="top-row ps-3 navbar navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="">Web</a>
-            </div>
-        </div>
-
-        <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-        <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-            <nav class="flex-column">
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="search">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Search
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="create">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="items">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Items
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="settings">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <form action="account/logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                        </button>
-                    </form>
-                </div>
-            </nav>
-        </div>
+        <nav class="flex flex-col space-y-8 pt-10 px-4">
+            <NavLink class="text-contrast font-normal w-full hover:bg-contrast hover:text-white px-2 py-2 rounded-xl text-lg" href="" Match="NavLinkMatch.All">
+                <i class="fi fi-rr-home"></i>&nbsp;&nbsp;Home
+            </NavLink>
+            <NavLink class="text-contrast font-normal w-full hover:bg-contrast hover:text-white px-2 py-2 rounded-xl text-lg" href="search">
+                <i class="fi fi-rr-search"></i>&nbsp;&nbsp;Search
+            </NavLink>
+            <NavLink class="text-contrast font-normal w-full hover:bg-contrast hover:text-white px-2 py-2 rounded-xl text-lg" href="create">
+                <i class="fi fi-rr-apps-add"></i>&nbsp;&nbsp;Create
+            </NavLink>
+            <NavLink class="text-contrast font-normal w-full hover:bg-contrast hover:text-white px-2 py-2 rounded-xl text-lg" href="items">
+                <i class="fi fi-rr-list"></i>&nbsp;&nbsp;Items
+            </NavLink>
+            <NavLink class="text-contrast font-normal w-full hover:bg-contrast hover:text-white px-2 py-2 rounded-xl text-lg" href="settings">
+                <i class="fi fi-rr-settings"></i>&nbsp;&nbsp;@context.User.Identity?.Name
+            </NavLink>
+            <form action="account/logout" method="post" class="w-full">
+                <AntiforgeryToken />
+                <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                <button type="submit" class="text-contrast font-normal w-full hover:bg-contrast hover:text-white px-2 py-2 rounded-xl text-lg text-left">
+                    <i class="fi fi-rr-sign-out-alt"></i>&nbsp;&nbsp;Logout
+                </button>
+            </form>
+        </nav>
     </Authorized>
 </AuthorizeView>
 
