@@ -10,12 +10,19 @@
     <Spinner/>
 } else
 {
-    <h3>Ste v poradovníku miestnosti @_room.Name</h3>
+    <h1>Ste v poradovníku miestnosti @_room.Name</h1>
 
-    <h5>Vaše číslo: @_queuedCurrentUser.Order</h5>
-    <h5>Pred Vami je ešte @_room.QueuedUsers.Count(x => x.Order < _queuedCurrentUser.Order) ľudí</h5>
-
-    <button @onclick="LeaveQueueAsync">Opustiť poradovník</button>
+    <div class="max-w-1/4 w-1/4 flex flex-col space-y-4 mt-4">
+        <div class="flex flex-col space-y-2">
+            <h5>Vaše číslo:</h5>
+            <p>@_queuedCurrentUser.Order</p>
+        </div>
+        <div class="flex flex-col space-y-2">
+            <h5>Počet ľudí pred Vami:</h5>
+            <p>@_room.QueuedUsers.Count(x => x.Order < _queuedCurrentUser.Order)</p>
+        </div>
+        <button class="btn-primary" @onclick="LeaveQueueAsync"><i class="fi fi-rr-user-slash"></i>&nbsp;&nbsp;Leave queue</button>
+    </div>
 }
 
 @code {
