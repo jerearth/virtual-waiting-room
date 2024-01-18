@@ -3,48 +3,45 @@
 @inject IDbContextFactory<AppDbContext> _dbContextFactory
 @inject NavigationManager _navigationManager
 
-<div class="row">
-    <div class="col-md-4">
-        @if (_room is null || _joinQueueModel is null)
-        {
-            <Spinner />
-        }
-        else
-        {
-            <EditForm Model="_joinQueueModel" OnValidSubmit="OnSubmitAsync">
-                <DataAnnotationsValidator />
-                <h2>Miestnosť @_room.Name</h2>
+@if (_room is null || _joinQueueModel is null)
+{
+    <Spinner />
+}
+else
+{
+    <h2>Room @_room.Name</h2>
+    <EditForm Model="_joinQueueModel" OnValidSubmit="OnSubmitAsync">
+        <DataAnnotationsValidator />
 
-                <hr />
+        <div class="flex flex-col space-y-8 w-1/3">
+            <div class="flex flex-col space-y-2">
+                <label for="notification-minutes-in-advance">Doba pred nástupom pre doručenie notifikácie (minút)</label>
+                <InputNumber @bind-Value="_joinQueueModel.NotificationMinutesInAdvance" class="my-input"
+                    autocomplete="notification-minutes-in-advance" placeholder="15" />
+                <ValidationMessage For="() => _joinQueueModel.NotificationMinutesInAdvance" class="text-danger" />
+            </div>
 
-                <ValidationSummary class="text-danger" role="alert" />
+            <div class="flex flex-col space-y-2">
+                <label for="phone-number">Telefónne číslo</label>
+                <InputText @bind-Value="_joinQueueModel.PhoneNumber" class="my-input" autocomplete="phone-number"
+                    placeholder="+421 xxx xxx xxx" />
+                <ValidationMessage For="() => _joinQueueModel.PhoneNumber" class="text-danger" />
+            </div>
 
-                <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="_joinQueueModel.NotificationMinutesInAdvance" class="form-control" autocomplete="notification-minutes-in-advance" placeholder="15" />
-                    <label for="notification-minutes-in-advance">Doba pred nástupom pre doručenie notifikácie (minút)</label>
-                    <ValidationMessage For="() => _joinQueueModel.NotificationMinutesInAdvance" class="text-danger" />
+            @if (_room.Password is not null)
+            {
+                <div class="flex flex-col space-y-2">
+                    <label for="phone-number">Heslo pre vstup</label>
+                    <InputText @bind-Value="_joinQueueModel.Password" class="my-input" autocomplete="password" />
+                    <ValidationMessage For="() => _joinQueueModel.Password" class="text-danger" />
                 </div>
+            }
 
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="_joinQueueModel.PhoneNumber" class="form-control" autocomplete="phone-number" placeholder="+421 xxx xxx xxx" />
-                    <label for="phone-number">Telefónne číslo</label>
-                    <ValidationMessage For="() => _joinQueueModel.PhoneNumber" class="text-danger" />
-                </div>
-
-                @if(_room.Password is not null)
-                {
-                    <div class="form-floating mb-3">
-                        <InputText @bind-Value="_joinQueueModel.Password" class="form-control" autocomplete="password" />
-                        <label for="phone-number">Heslo pre vstup</label>
-                        <ValidationMessage For="() => _joinQueueModel.Password" class="text-danger" />
-                    </div>
-                }
-
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Pripojiť sa</button>
-            </EditForm>
-        }
-    </div>
-</div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Pripojiť sa</button>
+        
+        </div>
+    </EditForm>
+}
 
 @code {
     [SupplyParameterFromQuery]
@@ -65,9 +62,9 @@
             return;
 
         _joinQueueModel = new()
-        {
-            PhoneNumber = _user.PhoneNumber ?? string.Empty
-        };
+            {
+                PhoneNumber = _user.PhoneNumber ?? string.Empty
+            };
 
         using var db = _dbContextFactory.CreateDbContext();
 
@@ -85,10 +82,10 @@
 
     private async Task OnSubmitAsync()
     {
-        if(_joinQueueModel is null || _room is null)
+        if (_joinQueueModel is null || _room is null)
             return;
 
-        if(_room.Password is not null && !_room.Password.Equals(_joinQueueModel.Password))
+        if (_room.Password is not null && !_room.Password.Equals(_joinQueueModel.Password))
         {
             _mainLayout.RunToast(new("Zadané heslo nie je správne.", ToastType.Fail));
             return;
@@ -104,7 +101,7 @@
             return;
         }
 
-        if(targetRoom.QueuedUsers.Any(x => x.QueueState.Equals(QueueState.Waiting) && x.UserId.Equals(_user.Id)))
+        if (targetRoom.QueuedUsers.Any(x => x.QueueState.Equals(QueueState.Waiting) && x.UserId.Equals(_user.Id)))
         {
             _mainLayout.RunToast(new("Už ste v poradovníku tejto miestnosti.", ToastType.Fail));
             _navigationManager.NavigateTo("/");
@@ -112,14 +109,14 @@
         }
 
         targetRoom.QueuedUsers.Add(new()
-        {
-           UserId = _user.Id,
-           RoomId = targetRoom.Id,
-           Order = targetRoom.QueuedUsers.Any() ? targetRoom.QueuedUsers.Max(x => x.Order) + 1 : 1,
-           PhoneNumber = _joinQueueModel.PhoneNumber,
-           NotificationMinutesInAdvance = _joinQueueModel.NotificationMinutesInAdvance,
-           QueueState = QueueState.Waiting
-        });
+            {
+                UserId = _user.Id,
+                RoomId = targetRoom.Id,
+                Order = targetRoom.QueuedUsers.Any() ? targetRoom.QueuedUsers.Max(x => x.Order) + 1 : 1,
+                PhoneNumber = _joinQueueModel.PhoneNumber,
+                NotificationMinutesInAdvance = _joinQueueModel.NotificationMinutesInAdvance,
+                QueueState = QueueState.Waiting
+            });
 
         await db.SaveChangesAsync();
         _navigationManager.NavigateTo($"/room/my-queue?id={Id}");
