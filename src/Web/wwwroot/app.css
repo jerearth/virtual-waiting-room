@@ -561,6 +561,10 @@ video {
   grid-column: span 3 / span 3;
 }
 
+.col-span-12 {
+  grid-column: span 12 / span 12;
+}
+
 .col-start-10 {
   grid-column-start: 10;
 }
@@ -645,6 +649,22 @@ video {
 
 .h-full {
   height: 100%;
+}
+
+.h-\[1vh\] {
+  height: 1vh;
+}
+
+.h-\[4vh\] {
+  height: 4vh;
+}
+
+.h-\[8vh\] {
+  height: 8vh;
+}
+
+.h-\[92vh\] {
+  height: 92vh;
 }
 
 .min-h-screen {
@@ -894,6 +914,11 @@ video {
   background-color: rgb(254 226 226 / var(--tw-bg-opacity));
 }
 
+.bg-pink-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(253 242 248 / var(--tw-bg-opacity));
+}
+
 .p-5 {
   padding: 1.25rem;
 }
@@ -981,6 +1006,11 @@ video {
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 
 .font-light {
