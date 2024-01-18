@@ -8,11 +8,32 @@
     <Spinner/>
 } else
 {
+    <h1>@(_room?.Name ?? Id.ToString())&nbsp;-&nbsp;Queue</h1>
+    <div class="w-full border-b-2 border-slate-200 px-4 py-2 grid grid-cols-12 gap-2">
+        <h3 class="col-span-2">Order</h3>
+        <h3 class="col-span-6">Phone</h3>
+        <h3 class="col-span-4 text-right">Actions</h3>
+    </div>
     foreach(var queuedUser in _room.QueuedUsers.Where(x => x.QueueState.Equals(QueueState.Waiting)).OrderBy(x => x.Order))
     {
-        <div>@queuedUser.Order @queuedUser.PhoneNumber
-            <button @onclick="async () => await MarkAsAsync(queuedUser, QueueState.NotHere)">Not here</button>
-            <button @onclick="async () => await MarkAsAsync(queuedUser, QueueState.Finished)">Finished</button>
+        <div class="w-full border-b-2 border-slate-200 px-4 py-2 grid grid-cols-12 gap-2">
+            <div class="col-span-2">
+                @queuedUser.Order
+            </div>
+            <div class="col-span-6">
+                @queuedUser.PhoneNumber
+            </div>
+            <div class="col-start-11">
+                <button class="w-full cursor-pointer font-normal hover:text-contrast smooth-change" @onclick="async () => await MarkAsAsync(queuedUser, QueueState.NotHere)">
+                    <i class="fi fi-rr-user-slash"></i>
+                </button>
+            </div>
+            <div class="col-start-12 w-full">
+                <button class="w-full cursor-pointer font-normal hover:text-contrast smooth-change" @onclick="async () => await MarkAsAsync(queuedUser, QueueState.Finished)">
+                    <i class="fi fi-rr-user-check"></i>
+                </button>
+            </div>
+            
         </div>
     }
 }

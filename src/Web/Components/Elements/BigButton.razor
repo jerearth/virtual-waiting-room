@@ -1,4 +1,9 @@
-﻿<button @onclick="async () => await OnClick.InvokeAsync()" disabled=@Disabled>@Text</button>
+﻿<button
+    @onclick="async () => await OnClick.InvokeAsync()" disabled=@Disabled
+    class="w-full bg-white my-shadow rounded-2xl p-6 h-auto border-2 border-white hover:border-primary flex flex-row items-baseline space-x-4">
+    <h1 class="flex items-center"><i class=@Icon></i></h1>
+    <h3 class="self-center text-primary">@Text</h3>
+</button>
 
 @code {
     [Parameter]
@@ -9,4 +14,7 @@
 
     [Parameter]
     public bool Disabled { get; set; }
+
+    [Parameter]
+    public string Icon {get; set;} = string.Empty;
 }

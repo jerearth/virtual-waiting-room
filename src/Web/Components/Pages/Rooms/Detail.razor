@@ -8,13 +8,15 @@
 {
     <Spinner/>
 } else {
-    <h3>Detaily o miestnosti @(_room?.Name ?? Id.ToString())</h3>
+    <h1>Detaily o miestnosti @(_room?.Name ?? Id.ToString())</h1>
 
-    @if(_room.RoomAdmins.Any(x => x.UserId.Equals(_user.Id)))
-    {
-        <button @onclick=@(() => _navigationManager.NavigateTo($"/create-room?id={_room.Id}"))>Upraviť miestnosť</button>
-        <button @onclick=@(() => _navigationManager.NavigateTo($"/room/queue?id={_room.Id}"))>Zobraziť poradovník</button>
-    }
+    <div class="grid grid-cols-4 gap-4 mt-8">
+        @if(_room.RoomAdmins.Any(x => x.UserId.Equals(_user.Id)))
+        {
+            <BigButton Icon="fi fi-rr-edit" Text="Edit room" OnClick=@(() => _navigationManager.NavigateTo($"/create-room?id={_room.Id}")) />
+            <BigButton Icon="fi fi-rr-users" Text="Show queue" OnClick=@(() => _navigationManager.NavigateTo($"/room/queue?id={_room.Id}")) />
+        }
+    </div>
 }
 
 @code {

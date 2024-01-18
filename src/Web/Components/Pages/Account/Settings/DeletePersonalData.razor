@@ -15,27 +15,28 @@
 
 <h3>Delete Personal Data</h3>
 
-<div class="alert alert-warning" role="alert">
-    <p>
-        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-    </p>
+<div class="border-2 rounded-xl border-red-500 bg-red-50 text-red-500 px-4 py-2 mt-4">
+    <i class="fi fi-rr-exclamation"></i>
+    &nbsp;Deleting this data will permanently remove your account, and this cannot be recovered.
 </div>
 
-<div>
-    <EditForm Model="Input" FormName="delete-user" OnValidSubmit="OnValidSubmitAsync" method="post">
-        <DataAnnotationsValidator />
-        <ValidationSummary class="text-danger" role="alert" />
+<EditForm Model="Input" FormName="delete-user" OnValidSubmit="OnValidSubmitAsync" method="post">
+    <DataAnnotationsValidator />
+    <div class="flex flex-col space-y-4 mt-8">
         @if (requirePassword)
         {
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your password." />
+            <div class="flex flex-col space-y-2">
                 <label for="password" class="form-label">Password</label>
+                <InputText type="password" @bind-Value="Input.Password" class="my-input" autocomplete="current-password"
+                    aria-required="true" placeholder="Please enter your password." />
                 <ValidationMessage For="() => Input.Password" class="text-danger" />
             </div>
         }
-        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete data and close my account</button>
-    </EditForm>
-</div>
+        <button class="w-full text-center py-2 px-4 bg-red-100 rounded-full text-red-800 hover:bg-red-800 hover:text-white" type="submit">
+            Delete data and close my account
+        </button>
+    </div>
+</EditForm>
 
 @code {
     private string? message;

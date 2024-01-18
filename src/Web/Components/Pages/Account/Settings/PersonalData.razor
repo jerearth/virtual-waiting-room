@@ -7,20 +7,19 @@
 <StatusMessage />
 <h3>Personal Data</h3>
 
-<div class="row">
-    <div class="col-md-6">
-        <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
-        <p>
-            <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-        </p>
-        <form action="settings/download-personal-data" method="post">
-            <AntiforgeryToken />
-            <button class="btn btn-primary" type="submit">Download</button>
-        </form>
-        <p>
-            <a href="settings/delete-personal-data" class="btn btn-danger">Delete</a>
-        </p>
+<div class="flex flex-col space-y-4">
+    <p class="font-normal">
+        Your account contains personal data that you have given us. This page allows you to download or delete that data.
+    </p>
+    <div class="border-2 rounded-xl border-red-500 bg-red-50 text-red-500 px-4 py-2 ">
+        <i class="fi fi-rr-exclamation"></i>
+        &nbsp;Deleting this data will permanently remove your account, and this cannot be recovered.
     </div>
+    <form action="settings/download-personal-data" method="post">
+        <AntiforgeryToken />
+        <button class="btn btn-primary" type="submit">Download</button>
+    </form>
+    <a href="settings/delete-personal-data" class="w-full text-center py-2 px-4 bg-red-100 rounded-full text-red-800 hover:bg-red-800 hover:text-white">Delete personal data</a>
 </div>
 
 @code {

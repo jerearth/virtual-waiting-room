@@ -3,7 +3,7 @@
 
 <PageTitle>Items</PageTitle>
 
-<h3>Items</h3>
+<h1>Rooms</h1>
 
 @if(_rooms is null)
 {
@@ -13,10 +13,16 @@
     <h5>Žiadne miestnosti doposiaľ neboli vytvorené</h5>
 } else
 {
-    foreach(var room in _rooms)
-    {
-        <RoomListItem Room="room" IsUserAdmin="true"/>
-    }
+    <div class="w-full border-b-2 border-slate-200 px-4 py-2 flex flex-row justify-between">
+        <h3>Name</h3>
+        <h3>Action</h3>
+    </div>
+    <div class="w-full flex flex-col space-y-8">
+        @foreach(var room in _rooms)
+        {
+            <RoomListItem Room="room" IsUserAdmin="true"/>
+        }
+    </div>
 }
 
 @code {

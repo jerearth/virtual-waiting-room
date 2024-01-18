@@ -1,16 +1,17 @@
 ﻿@inject NavigationManager _navigationManager
 
-<div style="display: flex; flex-direction: row; column-gap: 10px;
-background-color: rgba(240, 240, 240, 255);">
-    @Room.Name
+<div class="w-full border-b-2 border-slate-200 px-4 py-2 flex flex-row justify-between">
+    <div class="font-normal">
+        @Room.Name
+    </div>
     @if (IsUserAdmin)
     {
-        <div @onclick=@(() => _navigationManager.NavigateTo($"room/detail?id={Room.Id}")) style="cursor: pointer;">
-            Úprava
+        <div @onclick=@(() => _navigationManager.NavigateTo($"room/detail?id={Room.Id}")) class="cursor-pointer font-normal hover:text-contrast smooth-change">
+            <i class="fi fi-rr-edit"></i>
         </div>
     } else {
-        <div @onclick=@(() => _navigationManager.NavigateTo($"room/join?id={Room.Id}")) style="cursor: pointer;">
-            Návšteva
+        <div @onclick=@(() => _navigationManager.NavigateTo($"room/join?id={Room.Id}")) class="cursor-pointer font-normal hover:text-contrast smooth-change">
+            <i class="fi fi-rr-hand-paper"></i>
         </div>
     }
 </div>

@@ -5,7 +5,7 @@
 
 <PageTitle>Search</PageTitle>
 
-<h3>Search</h3>
+<h1>Search</h1>
 
 <SearchBar SearchObject="miestnosti" OnInputChanged="UpdateSearchTerm"/>
 
@@ -15,14 +15,20 @@
 }
 else if (!_rooms.Any())
 {
-    <h5>Žiadne miestnosti nezodpovedajú vyhľadávaniu</h5>
+    <div>Žiadne miestnosti nezodpovedajú vyhľadávaniu</div>
 }
 else
 {
-    foreach (var room in _rooms)
-    {
-        <RoomListItem Room="room" IsUserAdmin="false"/>
-    }
+    <div class="w-full border-b-2 border-slate-200 px-4 py-2 flex flex-row justify-between">
+        <h3>Name</h3>
+        <h3>Action</h3>
+    </div>
+    <div class="flex flex-col space-y-8 h-[70vh] mb-4">
+        @foreach (var room in _rooms)
+        {
+            <RoomListItem Room="room" IsUserAdmin="false"/>
+        }
+    </div>
 
     <PagingElement CurrentPage="_currentPage"
                    ElementCount="_roomCount"
