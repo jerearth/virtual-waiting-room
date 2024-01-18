@@ -5,75 +5,75 @@
 
 <PageTitle>@StringHelper.GetCreateOrEditAction(Id is null) miestnosť</PageTitle>
 
-<div class="row">
-    <div class="col-md-4">
-        <EditForm Model="_createRoomModel" OnValidSubmit="OnSubmitAsync">
-            <DataAnnotationsValidator />
-            <h2>@StringHelper.GetCreateOrEditAction(Id is null) miestnosť</h2>
+<EditForm Model="_createRoomModel" OnValidSubmit="OnSubmitAsync">
+    <DataAnnotationsValidator />
+    <h1>@StringHelper.GetCreateOrEditAction(Id is null) miestnosť</h1>
 
-            <hr />
+    @if(_createRoomModel is null)
+    {
+        <Spinner/>
+    } else {
+        <div class="flex flex-col space-y-8 w-1/3">
 
-            <ValidationSummary class="text-danger" role="alert" />
-            @if(_createRoomModel is null)
-            {
-                <Spinner/>
-            } else {
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="_createRoomModel.Name" class="form-control" autocomplete="room-name" placeholder="Všeobecná ambulancia" />
-                    <label for="name">Názov miestnosti</label>
-                    <ValidationMessage For="() => _createRoomModel.Name" class="text-danger" />
-                </div>
+            <div class="flex flex-col space-y-2">
+                <label for="name">Názov miestnosti</label>
+                <InputText @bind-Value="_createRoomModel.Name" class="my-input" autocomplete="room-name" placeholder="Všeobecná ambulancia" />
+                <ValidationMessage For="() => _createRoomModel.Name" class="text-danger" />
+            </div>
 
+            <div class="form-checkbox">
+                <InputCheckbox @bind-Value="_createRoomModel.AppearInSearch" />
+                <label for="appear-in-search">Zobraziť vo vyhľadávaní</label>
+                <ValidationMessage For="() => _createRoomModel.AppearInSearch" class="text-danger" />
+            </div>
+
+            <div class="flex flex-col space-y-4">
                 <div class="form-checkbox">
-                    <label for="appear-in-search">Zobraziť vo vyhľadávaní</label>
-                    <InputCheckbox @bind-Value="_createRoomModel.AppearInSearch" />
-                    <ValidationMessage For="() => _createRoomModel.AppearInSearch" class="text-danger" />
-                </div>
-
-                <div class="form-checkbox">
-                    <label for="enable-daily-limit">Obmedziť denný počet návštevníkov</label>
                     <InputCheckbox @bind-Value="_createRoomModel.EnableDailyLimit" />
+                    <label for="enable-daily-limit">Obmedziť denný počet návštevníkov</label>
                 </div>
 
                 @if (_createRoomModel.EnableDailyLimit)
                 {
-                    <div class="form-floating mb-3">
-                        <InputNumber @bind-Value="_createRoomModel.DailyLimit" class="form-control" autocomplete="room-daily-limit" placeholder="1" />
+                    <div class="flex flex-col space-y-2">
                         <label for="daily-limit">Denný limit</label>
+                        <InputNumber @bind-Value="_createRoomModel.DailyLimit" class="my-input" autocomplete="room-daily-limit" placeholder="1" />
                         <ValidationMessage For="() => _createRoomModel.DailyLimit" class="text-danger" />
                     </div>
                 }
+            </div>
 
+            <div class="flex flex-col space-y-4">
                 <div class="form-checkbox">
-                    <label for="require-password">Vyžadovať heslo</label>
                     <InputCheckbox @bind-Value="_createRoomModel.RequirePassword" />
+                    <label for="require-password">Vyžadovať heslo</label>
                 </div>
 
                 @if (_createRoomModel.RequirePassword)
                 {
-                    <div class="form-floating mb-3">
-                        <InputText @bind-Value="_createRoomModel.Password" class="form-control" autocomplete="password" />
+                    <div class="flex flex-col space-y-2">
                         <label for="daily-limit">Heslo</label>
+                        <InputText @bind-Value="_createRoomModel.Password" class="my-input" autocomplete="password" />
                         <ValidationMessage For="() => _createRoomModel.Password" class="text-danger" />
                     </div>
                 }
+            </div>
 
-                <div class="form-checkbox">
-                    <label for="require-confirmation">Vyžadovať potvrdenie od každej osoby pre prístup</label>
-                    <InputCheckbox @bind-Value="_createRoomModel.RequireConfirmation" />
-                </div>
+            <div class="form-checkbox">
+                <InputCheckbox @bind-Value="_createRoomModel.RequireConfirmation" />
+                <label for="require-confirmation">Vyžadovať potvrdenie od každej osoby pre prístup</label>
+            </div>
 
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="_createRoomModel.Notes" class="form-control" autocomplete="notes" placeholder="Prosíme pred vstupom si pripraviť ..." />
-                    <label for="notes">Poznámky pre zákazníkov/klientov</label>
-                    <ValidationMessage For="() => _createRoomModel.Notes" class="text-danger" />
-                </div>
+            <div class="flex flex-col space-y-2">
+                <label for="notes">Poznámky pre zákazníkov/klientov</label>
+                <InputText @bind-Value="_createRoomModel.Notes" class="my-input" autocomplete="notes" placeholder="Prosíme pred vstupom si pripraviť ..." />
+                <ValidationMessage For="() => _createRoomModel.Notes" class="text-danger" />
+            </div>
 
-                <button type="submit" class="w-100 btn btn-lg btn-primary">@StringHelper.GetCreateOrEditAction(Id is null)</button>
-            }
-        </EditForm>
-    </div>
-</div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">@StringHelper.GetCreateOrEditAction(Id is null)</button>
+        </div>
+    }
+</EditForm>
 
 @code {
     [SupplyParameterFromQuery]
