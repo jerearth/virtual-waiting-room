@@ -6,11 +6,11 @@
     </div>
     @if (IsUserAdmin)
     {
-        <div @onclick=@(() => _navigationManager.NavigateTo($"room/detail?id={Room.Id}")) class="cursor-pointer font-normal">
+        <div @onclick=@(() => _navigationManager.NavigateTo($"room/detail?id={Room.Id}")) class="cursor-pointer font-normal hover:text-contrast smooth-change">
             <i class="fi fi-rr-edit"></i>
         </div>
     } else {
-        <div @onclick=@(() => _navigationManager.NavigateTo($"room/join?id={Room.Id}")) class="cursor-pointer font-normal">
+        <div @onclick=@(() => _navigationManager.NavigateTo($"room/join?id={Room.Id}")) class="cursor-pointer font-normal hover:text-contrast smooth-change">
             <i class="fi fi-rr-hand-paper"></i>
         </div>
     }

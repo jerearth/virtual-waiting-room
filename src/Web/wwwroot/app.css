@@ -550,6 +550,10 @@ video {
   margin-bottom: 0.75rem;
 }
 
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
 .flex {
   display: flex;
 }
@@ -572,6 +576,10 @@ video {
 
 .h-\[5vh\] {
   height: 5vh;
+}
+
+.h-\[70vh\] {
+  height: 70vh;
 }
 
 .h-\[95vh\] {
@@ -1019,13 +1027,11 @@ a:hover,
   padding-top: 1.1rem;
 }
 
-button, a {
+button, a, .smooth-change {
   transition: all 0.2s ease-in;
 }
 
 .my-shadow {
-  /* box-shadow: rgba(14, 25, 78, 0.2) 0px 12px 28px 0px, rgba(14, 25, 78, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
-     box-shadow: rgba(14, 25, 78, 0.15) 0px 15px 25px, rgba(14, 25, 78, 0.05) 0px 5px 10px;*/
   box-shadow: rgba(14, 25, 78, 0.1) 0px 4px 16px,
     rgba(14, 25, 78, 0.1) 0px 8px 24px, rgba(14, 25, 78, 0.1) 0px 16px 56px;
 }
@@ -1245,6 +1251,11 @@ h1:focus {
 .hover\:bg-contrast:hover {
   --tw-bg-opacity: 1;
   background-color: hsl(21 100% 56% / var(--tw-bg-opacity));
+}
+
+.hover\:text-contrast:hover {
+  --tw-text-opacity: 1;
+  color: hsl(21 100% 56% / var(--tw-text-opacity));
 }
 
 .hover\:text-red-500:hover {
