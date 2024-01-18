@@ -791,12 +791,21 @@ video {
   padding-bottom: 1rem;
 }
 
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .pt-10 {
   padding-top: 2.5rem;
 }
 
 .pt-12 {
   padding-top: 3rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
 }
 
 .text-left {
