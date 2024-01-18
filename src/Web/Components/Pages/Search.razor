@@ -15,14 +15,16 @@
 }
 else if (!_rooms.Any())
 {
-    <h5>Žiadne miestnosti nezodpovedajú vyhľadávaniu</h5>
+    <div>Žiadne miestnosti nezodpovedajú vyhľadávaniu</div>
 }
 else
 {
-    foreach (var room in _rooms)
-    {
-        <RoomListItem Room="room" IsUserAdmin="false"/>
-    }
+    <div class="flex flex-col space-y-4 w-full py-4">
+        @foreach (var room in _rooms)
+        {
+            <RoomListItem Room="room" IsUserAdmin="false"/>
+        }
+    </div>
 
     <PagingElement CurrentPage="_currentPage"
                    ElementCount="_roomCount"
